@@ -1,8 +1,10 @@
+import pyperclip
+
 SYMBOLS_PL = 'AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWXYZŹŻaąbcćdeęfghijklłmnńoóprsśtuwxyzźż1234567890 !?.'
 slen = len(SYMBOLS_PL)
 
 
-def crack_caesar(msg, key, mode):
+def run_caesar(msg, key, mode):
     """
     :param mode: 0=decryption 1=encryption
     """
@@ -17,8 +19,15 @@ def crack_caesar(msg, key, mode):
 
 
 def decrypt_caesar(msg, key):
-    return crack_caesar(msg, key, 0)
+    return run_caesar(msg, key, 0)
 
 
 def encrypt_caesar(msg, key):
-    return crack_caesar(msg, key, 1)
+    res = run_caesar(msg, key, 1)
+    pyperclip.copy(res)
+    return res
+
+
+def crack_caesar(msg):
+    for i in range(slen):
+        print(f"Key={i} msg={decrypt_caesar(msg, i)}")
