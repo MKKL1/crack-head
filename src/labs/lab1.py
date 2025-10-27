@@ -1,6 +1,4 @@
-
-from caesar_cipher import decrypt_caesar, encrypt_caesar
-from src.caesar_cipher import crack_caesar
+from src.caesar_cipher import crack_caesar, decrypt_caesar, encrypt_caesar
 
 if __name__ == "__main__":
     # crack_caesar("""0iEŃJWiŚXÓKĘKiTNJĘSĆJiwWŁJWŚŹińĘŹĄSiRSĄXJĘiRÓLSŹZaÓXĄMiRŁĄŃZiŚRJŚLÓXĆPXliwĘHÓiaÓŃĄiCĄSEŹÓiŻŁĘiŚJFiĆŹWMĄiJiNJĄMĄiCĄSEŹÓiLSXĄXĘiŚŃZli4ÓRSÓŚJMĄiHÓiÓiRÓŹÓŚUĄŃJĘiXiEÓNW,iĄŁĘiÓŚUĄUĘĆŹŃJĘiwWŁJWŚŹiŹEĘĆZEÓXĄMiŚJFiRÓKĄXJDiŃĄiÓCSĄEĄĆIiŚĘŃĄUWliżĄXĘUiXiESÓEŹĘiŃĄiÓCSĄEZiÓUSŹZNĄMiŁJŚUiŹiÓŚUSŹĘaĘŃJĘN,iĄŁĘiŚRJĘŚŹZMiŚJFiJiŚĆIÓXĄMiHÓiŃĄiRPŻŃJĘKl""")
