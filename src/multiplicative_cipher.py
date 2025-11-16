@@ -3,14 +3,14 @@ from src.crypto_math import get_mod_inverse
 
 symb_len = len(SYMBOLS_PL)
 
-def multiplicative_encrypt(message, key):
+def multiplicative_encrypt(message: str, key: int) -> str:
     encrypted = ''
     for symbol in message:
         index = SYMBOLS_PL.find(symbol)
         encrypted += SYMBOLS_PL[index * key % symb_len]
     return encrypted
 
-def multiplicative_decrypt(message, key):
+def multiplicative_decrypt(message: str, key: int) -> str:
     decrypted = ''
     inv_key = get_mod_inverse(key, symb_len)
     for symbol in message:
