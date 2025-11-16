@@ -15,7 +15,7 @@ def run_caesar(msg: str, key: int, mode: AlgorithmMode) -> str:
     for symbol in msg:
         if symbol in SYMBOLS_PL:
             ind = SYMBOLS_PL.find(symbol)
-            result += SYMBOLS_PL[(ind + key if mode == 1 else ind - key) % slen]
+            result += SYMBOLS_PL[(ind + key if mode == AlgorithmMode.Encryption else ind - key) % slen]
         else:
             result += symbol
     return result
