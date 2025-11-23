@@ -1,19 +1,19 @@
-from src.affine_cipher import getKeyParts, affine_decrypt, affine_encrypt
+from src.affine_cipher import AffineCipher
 from src.crypto_math import gcd
-from src.defs import SYMBOLS_PL
 from src.detect_english import EnglishDetector
 
-#TODO change every cipher to class to add symbols
 def crack_affine_cipher(cipher):
     ed = EnglishDetector("../dictionary.txt")
     SYMBOLS_EN = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 !?,.'"
+    affine = AffineCipher(SYMBOLS_EN)
+
     length = len(SYMBOLS_EN)
     for key in range(length**2):
-        keyA = getKeyParts(key)[0]
+        keyA = affine.get_key_parts(key)[0]
         if gcd(keyA, length) != 1:
             continue
 
-        plainText = affine_decrypt(cipher, key)
+        plainText = affine.decrypt(cipher, key)
         if ed.is_eng(plainText):
             print(f"Potencjalny tekst jawny '{plainText}'")
             print("Wpisz 'yes' zeby potwierdzic")

@@ -1,35 +1,51 @@
 from src.defs import SYMBOLS_PL, AlgorithmMode
 
-slen = len(SYMBOLS_PL)
 
-def generate_key(msg, key):
-    key = list(key)
-    if len(msg) == len(key):
-        return key
-    else:
-        for i in range(len(msg) - len(key)):
-            key.append(key[i % len(key)])
-    return "".join(key)
+class VigenereCipher:
+    """Vigenere cipher with configurable symbol set."""
 
-def run_vigenere(msg: str, key: str, mode: AlgorithmMode) -> str:
-    result = ''
-    key = generate_key(msg, key)
-    for i in range(len(msg)):
-        symbol = msg[i]
-        key_symbol = key[i % len(key)]
-        if symbol in SYMBOLS_PL:
-            ind = SYMBOLS_PL.find(symbol)
-            ind_k = SYMBOLS_PL.find(key_symbol)
-            result += SYMBOLS_PL[(ind + ind_k if mode == AlgorithmMode.Encryption else ind - ind_k) % slen]
-        else:
-            result += symbol
-    return result
+    def __init__(self, symbols: str = SYMBOLS_PL):
+        self.symbols = symbols
+        self.length = len(symbols)
 
-def vigenere_encrypt(message: str, key: str) -> str:
-    return run_vigenere(message, key, AlgorithmMode.Encryption)
+    def encrypt(self, message: str, key: str) -> str:
+        """Encrypt message using Vigenere cipher."""
+        return self._run(message, key, AlgorithmMode.Encryption)
 
-def vigenere_decrypt(cipher: str, key: str):
-    return run_vigenere(cipher, key, AlgorithmMode.Decryption)
+    def decrypt(self, cipher: str, key: str) -> str:
+        """Decrypt cipher using Vigenere cipher."""
+        return self._run(cipher, key, AlgorithmMode.Decryption)
+
+    def _run(self, text: str, key: str, mode: AlgorithmMode) -> str:
+        """Core Vigenere cipher logic."""
+        result = ''
+        key_extended = self._generate_key(text, key)
+
+        for i, symbol in enumerate(text):
+            key_symbol = key_extended[i]
+            if symbol in self.symbols:
+                symbol_index = self.symbols.find(symbol)
+                key_index = self.symbols.find(key_symbol)
+
+                if mode == AlgorithmMode.Encryption:
+                    new_index = (symbol_index + key_index) % self.length
+                else:
+                    new_index = (symbol_index - key_index) % self.length
+
+                result += self.symbols[new_index]
+            else:
+                result += symbol
+        return result
+
+    def _generate_key(self, message: str, key: str) -> str:
+        """Extend key to match message length."""
+        if len(message) <= len(key):
+            return key
+
+        extended_key = list(key)
+        for i in range(len(message) - len(key)):
+            extended_key.append(key[i % len(key)])
+        return "".join(extended_key)
 
 if __name__ == '__main__':
     message = "siema elo trzy dwa zero"
