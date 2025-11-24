@@ -1,46 +1,15 @@
-# import _cryptomath as cm
-# import _multiplicativeCipher as mc
-# import pyperclip, random, sys
-#
-# SYMBOLS_PL = mc.SYMBOLS_PL
-# length = len(SYMBOLS_PL)
-# mode = 0
-#
-#
-# def main():
-#     message_ = input('Wrpowadź treść wiadomości: ')
-#     key_ = input('Wprowadź klucz dla szyfru afinicznego: ')
-#     # musi to być liczba całkowita
-#     # wygenerowana z niej zostanie część multiplikatywna keyA
-#     # ..oraz część addytywna keyB
-#     mode_ = input('Wybierz tryb pracy: 1=enkrypcja lub 0=dekrypcja: ')
-#     mode = int(mode_)
-#     outcome = ''
-#
-#     if mode == 1:
-#         outcome = affineEncrypt(message_, int(key_))
-#     elif mode == 0:
-#         outcome = affineDecrypt(message_, int(key_))
-#
-#     print(outcome)
-import sys
-
-from src.crypto_math import gcd, get_mod_inverse
-from src.defs import SYMBOLS_PL, AlgorithmMode
+from src.defs import AlgorithmMode
 from src.crypto_math import get_mod_inverse,gcd
 
 SYMBOLS_EN = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 !?,.'"
 
 
 class AffineCipher:
-    """Affine cipher with configurable symbol set."""
-
     def __init__(self, symbols: str = SYMBOLS_EN):
         self.symbols = symbols
         self.length = len(symbols)
 
     def encrypt(self, message: str, key: int) -> str:
-        """Encrypt message using affine cipher."""
         key_a, key_b = self.get_key_parts(key)
         self.check_keys(key_a, key_b, AlgorithmMode.Encryption)
 
@@ -54,7 +23,6 @@ class AffineCipher:
         return cipher_text
 
     def decrypt(self, cipher: str, key: int) -> str:
-        """Decrypt cipher using affine cipher."""
         key_a, key_b = self.get_key_parts(key)
         self.check_keys(key_a, key_b, AlgorithmMode.Decryption)
 
@@ -72,13 +40,11 @@ class AffineCipher:
         return plain_text
 
     def get_key_parts(self, key: int) -> tuple[int, int]:
-        """Split combined key into keyA and keyB."""
         key_a = key // self.length
         key_b = key % self.length
         return key_a, key_b
 
     def check_keys(self, key_a: int, key_b: int, mode: AlgorithmMode):
-        """Validate key components."""
         if key_a == 1 and mode == AlgorithmMode.Encryption:
             raise ValueError('Cipher is weak when keyA=1. Choose different key.')
         if key_b == 0 and mode == AlgorithmMode.Encryption:

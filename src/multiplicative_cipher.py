@@ -3,14 +3,11 @@ from src.crypto_math import get_mod_inverse,gcd
 
 
 class MultiplicativeCipher:
-    """Multiplicative cipher with configurable symbol set."""
-
     def __init__(self, symbols: str = SYMBOLS_PL):
         self.symbols = symbols
         self.length = len(symbols)
 
     def encrypt(self, message: str, key: int) -> str:
-        """Encrypt message using multiplicative cipher."""
         if gcd(key, self.length) != 1:
             raise ValueError(f"Key {key} must be coprime with alphabet length {self.length}")
 
@@ -24,7 +21,6 @@ class MultiplicativeCipher:
         return encrypted
 
     def decrypt(self, cipher: str, key: int) -> str:
-        """Decrypt cipher using multiplicative cipher."""
         if gcd(key, self.length) != 1:
             raise ValueError(f"Key {key} must be coprime with alphabet length {self.length}")
 

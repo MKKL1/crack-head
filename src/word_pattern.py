@@ -40,11 +40,9 @@ class WordPattern:
 
         return patterns_map
 
-    def get_words_from_pattern(self, cipher_word: str) -> list[str]:
-        target_pattern = self.get_word_pattern(cipher_word)
-
-        if target_pattern in self.patterns_map:
-            return self.patterns_map[target_pattern]
+    def get_words_from_pattern(self, pattern: tuple[int, ...]) -> list[str]:
+        if pattern in self.patterns_map:
+            return self.patterns_map[pattern]
         else:
             return []
 
