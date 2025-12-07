@@ -1,4 +1,4 @@
-from src.defs import SYMBOLS_PL, AlgorithmMode
+from src.defs import AlgorithmMode, SYMBOLS_PL
 
 
 class VigenereCipher:
@@ -6,50 +6,36 @@ class VigenereCipher:
 
     def __init__(self, symbols: str = SYMBOLS_PL):
         self.symbols = symbols
-        self.length = len(symbols)
+        self.modulus = len(symbols)
 
     def encrypt(self, message: str, key: str) -> str:
-        """Encrypt message using Vigenere cipher."""
-        return self._run(message, key, AlgorithmMode.Encryption)
+        return self._process(message, key, mode=AlgorithmMode.Encryption)
 
     def decrypt(self, cipher: str, key: str) -> str:
-        """Decrypt cipher using Vigenere cipher."""
-        return self._run(cipher, key, AlgorithmMode.Decryption)
+        return self._process(cipher, key, mode=AlgorithmMode.Decryption)
 
-    def _run(self, text: str, key: str, mode: AlgorithmMode) -> str:
-        """Core Vigenere cipher logic."""
-        result = ''
-        key_extended = self._generate_key(text, key)
+    def _process(self, text: str, key: str, mode: AlgorithmMode) -> str:
+        result = []
+        key_len = len(key)
 
-        for i, symbol in enumerate(text):
-            key_symbol = key_extended[i]
-            if symbol in self.symbols:
-                symbol_index = self.symbols.find(symbol)
-                key_index = self.symbols.find(key_symbol)
+        for i, char in enumerate(text):
+            key_char = key[i % key_len]
+            txt_idx = self.symbols.find(char)
+            key_idx = self.symbols.find(key_char)
 
-                if mode == AlgorithmMode.Encryption:
-                    new_index = (symbol_index + key_index) % self.length
-                else:
-                    new_index = (symbol_index - key_index) % self.length
-
-                result += self.symbols[new_index]
+            if mode == AlgorithmMode.Encryption:
+                new_idx = (txt_idx + key_idx) % self.modulus
             else:
-                result += symbol
-        return result
+                new_idx = (txt_idx - key_idx) % self.modulus
 
-    def _generate_key(self, message: str, key: str) -> str:
-        """Extend key to match message length."""
-        if len(message) <= len(key):
-            return key
+            result.append(self.symbols[new_idx])
 
-        extended_key = list(key)
-        for i in range(len(message) - len(key)):
-            extended_key.append(key[i % len(key)])
-        return "".join(extended_key)
+        return "".join(result)
 
 if __name__ == '__main__':
     message = "siema elo trzy dwa zero"
     secret_key = "elo"
-    cipher = vigenere_encrypt(message, secret_key)
-    print(cipher)
-    print(vigenere_decrypt(cipher, secret_key))
+    cipher = VigenereCipher()
+    enc = "SJhWTTęTńWI"
+    print(enc)
+    print(cipher.decrypt(enc, "AARHUS"))

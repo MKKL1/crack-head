@@ -25,8 +25,14 @@ class SubstitutionCracker:
 
             word_knowledge = {}
             for cand in candidates:
-                for cipher_char, plain_char in zip(word, cand):
-                    word_knowledge.setdefault(cipher_char, set()).add(plain_char)
+                for i in range(len(word)):
+                    cipher_char = word[i]
+                    plain_char = cand[i]
+
+                    if cipher_char not in word_knowledge:
+                        word_knowledge[cipher_char] = set()
+
+                    word_knowledge[cipher_char].add(plain_char)
 
             for char, possible_plain_chars in word_knowledge.items():
                 if char not in mapping:
@@ -106,14 +112,14 @@ if __name__ == '__main__':
     key = cipher.get_random_key()
     enc = cipher.encrypt(msg, key)
 
-    print(f"Original:  {msg}")
-    print(f"Key used:  {key}")
-    print(f"Encrypted: {enc}")
-    print("-" * 20)
+    print(f"Original:      {msg}")
+    print("-" * 50)
+    print(f"Key used:      {key}")
+    print(f"Encrypted:     {enc}")
 
     cracker = SubstitutionCracker()
     decrypted = cracker.crack(enc)
 
-    print("-" * 20)
-    print(f"Decrypted: {decrypted[0]}")
+    print("-" * 50)
     print(f"Recovered key: {decrypted[1]}")
+    print(f"Decrypted:     {decrypted[0]}")
