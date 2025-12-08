@@ -1,4 +1,4 @@
-from src.vigenere_cipher import VigenereCipher
+from src.vigenere.vigenere_cipher import VigenereCipher
 from src.detect_english import EnglishDetector
 
 
@@ -31,7 +31,7 @@ class VigenereDictionaryCracker:
 
 
 if __name__ == "__main__":
-    cracker = VigenereDictionaryCracker("../dictionary.txt")
+    cracker = VigenereDictionaryCracker("../../dictionary.txt")
 
     msg = "HELLO WORLD"
     secret = "KEY"

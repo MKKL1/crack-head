@@ -36,6 +36,6 @@ if __name__ == '__main__':
     message = "siema elo trzy dwa zero"
     secret_key = "elo"
     cipher = VigenereCipher()
-    enc = "SJhWTTęTńWI"
+    enc = cipher.encrypt(message, secret_key)
     print(enc)
-    print(cipher.decrypt(enc, "AARHUS"))
+    print(cipher.decrypt(enc, secret_key))

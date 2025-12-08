@@ -3,14 +3,14 @@ import re
 
 def spacing_between_sequences(message: str) -> dict[str, list[int]]:
     """
-    Find spacing between unknown, repeating sequences (3-5 length)
+    Find spacing between unknown, repeating sequences (3-6 length)
     """
     clean_msg = re.sub(r'[^A-Z]', '', message.upper())
     msg_len = len(clean_msg)
 
     sequences: dict[str, list[int]] = {}
 
-    for seq_len in range(3, 5):
+    for seq_len in range(3, 6):
         for j in range(msg_len - seq_len + 1):
             seq = clean_msg[j:j + seq_len]
 
@@ -19,15 +19,15 @@ def spacing_between_sequences(message: str) -> dict[str, list[int]]:
             sequences[seq].append(j)
 
     sequences_spacing: dict[str, list[int]] = {}
+
     for seq, indices in sequences.items():
         if len(indices) < 2:
             continue
 
         spacing = []
-        first = indices[0]
-        for i in range(1, len(indices)):
-            second = indices[i]
-            spacing.append(abs(first - second))
+        for i in range(len(indices)):
+            for j in range(i+1, len(indices)):
+                spacing.append(indices[j] - indices[i])
 
         sequences_spacing[seq] = spacing
 
@@ -68,9 +68,7 @@ def get_kasiski_examination_result(ciphertext: str) -> list[int]:
     """
     spacings = spacing_between_sequences(ciphertext)
     common_factors = get_most_common_factors(spacings)
-    allLikelyKeyLengths = [item[0] for item in common_factors]
-
-    return allLikelyKeyLengths
+    return [item[0] for item in common_factors]
 
 
 if __name__ == '__main__':
