@@ -2,6 +2,9 @@ import re
 
 
 def spacing_between_sequences(message: str) -> dict[str, list[int]]:
+    """
+    Find spacing between unknown, repeating sequences (3-5 length)
+    """
     clean_msg = re.sub(r'[^A-Z]', '', message.upper())
     msg_len = len(clean_msg)
 
@@ -45,6 +48,9 @@ def get_factors(number: int, max_key_length: int = 16) -> list[int]:
 
 
 def get_most_common_factors(sequences_spacings: dict[str, list[int]]) -> list[tuple[int, int]]:
+    """
+    Sort by most often appearing factor. eg, {'ETX': [38]... => [(2,5), (4,1), (x, count)]
+    """
     factors_count = {}
 
     for seq_list in sequences_spacings.values():
@@ -57,6 +63,9 @@ def get_most_common_factors(sequences_spacings: dict[str, list[int]]) -> list[tu
 
 
 def get_kasiski_examination_result(ciphertext: str) -> list[int]:
+    """
+    Extract factors [(2,5), (4,1), (x, count)] => [2,4,x,...]
+    """
     spacings = spacing_between_sequences(ciphertext)
     common_factors = get_most_common_factors(spacings)
     allLikelyKeyLengths = [item[0] for item in common_factors]
