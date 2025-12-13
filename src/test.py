@@ -1,17 +1,15 @@
-SYMBOLS = "AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWXYZŹŻaąbcćdeęfghijklłmnńoóprsśtuwxyzźż1234567890 !?."
-encrypted = "SJhWT"
-secret = "KEY"
+SYMBOLS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ "
+encrypted = "PJY A OWCLO"
+secret = "INTROAYYMANTURNONTHATBEATDAWGTHEONETHATIMADEUHMINUTESAGOHEHEHTHISBITCHHARDASFUCKDAMNALRIGHTCHORUSALLTHESEWEBSONMEYOUTHINKIMSPIDERMANALLTHESEWEBSONMEYOUTHINKIMSPIDERMANALLTHESEWEBSONMEYOUTHINKIMSPIDERMANALLTHESEWEBSONMEYOUTHINKIMSPIDERMANALLTHESEWEBSONMEYOU"
 
-# We assume that message contains only characters from SYMBOLS
-message = ""
-for i, encrypted_char in enumerate(encrypted):
-    key_char = secret[i % len(secret)]
+def vernam_encrypt(message, key):
+    res = []
+    for i in range(len(message)):
+        indMsg = SYMBOLS.find(message[i])
+        indKey = SYMBOLS.find(key[i])
+        resInd = (indMsg ^ indKey) % len(SYMBOLS)
+        res.append(SYMBOLS[resInd])
 
-    encrypted_index = SYMBOLS.find(encrypted_char)
-    key_index = SYMBOLS.find(key_char)
+    return ''.join(res)
 
-    #                      + CHANGED TO -
-    new_index = (encrypted_index - key_index) % len(SYMBOLS)
-    message += SYMBOLS[new_index]
-
-print(message)  # HELLO
+print(vernam_encrypt(encrypted, secret))

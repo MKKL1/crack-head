@@ -15,7 +15,7 @@ class EnglishDetector:
         letters_only = [symbol for symbol in message if symbol in self.SYMBOLS]
         return ''.join(letters_only)
 
-    def get_eng_count(self, message):
+    def get_eng_percentage(self, message):
         potential_word_list = self.remove_non_letters(message).split()
         if not potential_word_list:
             return 0.0
@@ -23,7 +23,7 @@ class EnglishDetector:
         return matches / len(potential_word_list)
 
     def is_eng(self, message, words_percentage=50, letters_percentage=60):
-        words_match = self.get_eng_count(message) * 100 >= words_percentage
+        words_match = self.get_eng_percentage(message) * 100 >= words_percentage
         letters_match = (len(self.remove_non_letters(message)) / len(message)) * 100 >= letters_percentage
         return words_match and letters_match
 

@@ -1,94 +1,108 @@
 import math
-
+from typing import List, Dict, Any
 from src.detect_english import EnglishDetector
 
 
-class ShiftCipher:
-    """Transposition/Shift cipher with configurable symbol set."""
+class TranspositionCipher:
+    """
+    Implements Columnar Transposition Cipher logic.
+    Ref: Shifts characters into a grid based on the key (column count).
+    """
 
     def encrypt(self, message: str, key: int) -> str:
-        """Encrypt message using shift cipher."""
-        result_list = [''] * key
+        """
+        Encrypts message by writing to 'key' columns and reading rows.
+        """
+        # Create a list of strings for each column
+        columns = [''] * key
+
         for i, char in enumerate(message):
-            column = i % key
-            result_list[column] += char
-        return ''.join(result_list)
+            col_index = i % key
+            columns[col_index] += char
+
+        return ''.join(columns)
 
     def decrypt(self, cipher: str, key: int) -> str:
-        """Decrypt cipher using shift cipher."""
-        cipher_length = len(cipher)
-        columns_number = math.ceil(cipher_length / key)
-        rows_number = key
-        empty_cells_number = rows_number * columns_number - cipher_length
-        result_list = [''] * columns_number
+        cols = key
+        rows = math.ceil(len(cipher) / cols)
+        empty_cells = (rows * cols) - len(cipher)
 
-        h = 0
-        for i in range(cipher_length):
-            current_row_no = (i + h) // columns_number
-            current_col_no = (i + h) % columns_number
+        columns = []
+        position = 0
 
-            if (current_row_no >= rows_number - empty_cells_number and
-                    current_col_no == columns_number - 1):
-                h += 1
-                result_list[0] += cipher[i]
+        for col_num in range(cols):
+            is_short_column = col_num >= cols - empty_cells
+
+            if is_short_column:
+                height = rows - 1
             else:
-                result_list[current_col_no] += cipher[i]
+                height = rows
 
-        return ''.join(result_list)
+            column_text = cipher[position: position + height]
+            columns.append(column_text)
+            position += height
 
-    def crack(self, cipher: str):
-        """Brute force crack by trying all possible keys."""
-        for keyValue in range(2, len(cipher) - 1):
-            plain_text = self.decrypt(cipher, keyValue)
-            print('key={0} msg={1}'.format(keyValue, plain_text))
+        result = []
 
-    def crack_shift_cipher_smart(self, cipher, eng_detector: EnglishDetector):
+        for row_num in range(rows):
+            for column in columns:
+                if row_num < len(column):
+                    result.append(column[row_num])
+
+        return ''.join(result)
+
+
+class TranspositionHacker:
+    """
+    Tools to brute-force break the Transposition Cipher.
+    """
+
+    def __init__(self):
+        self.cipher_engine = TranspositionCipher()
+        self.detector = EnglishDetector()
+
+    def hack(self, ciphertext: str) -> List[Dict[str, Any]]:
+        """
+        Smart brute-force: Tries keys and returns only English-like results.
+        """
         candidates = []
+        # Key limit: Theoretically up to length of message, but usually much smaller.
+        # We check up to half the length as a reasonable heuristic.
+        max_key = len(ciphertext) // 2
 
-        max_key = len(cipher) // 2
-        for key_value in range(2, max_key + 1):
-            plain_text = self.decrypt(cipher, key_value)
+        for key in range(1, max_key + 1):
+            decrypted_text = self.cipher_engine.decrypt(ciphertext, key)
 
-            if eng_detector.is_eng(plain_text):
-                candidates.append({"key": key_value, "text": plain_text})
+            # Only keep candidates that look like valid English
+            if self.detector.is_eng(decrypted_text):
+                candidates.append({
+                    "key": key,
+                    "text": decrypted_text
+                })
 
         return candidates
 
-# if __name__ == '__main__':
-    # message_ = input('Wprowadź treść wiadomości: ')
-    # key_ = input('Wprowadź klucz: ')
-    # mode_ = input('Wprowadź tryb: 0 = dekrypcja lub 1 = enkrypcja: ')
-    # messageLength = len(message_)
-    # outcome = ''
-    #
-    # if mode_ == '1':
-    #     outcome = shift_encrypt(message_, int(key_))
-    # else:
-    #     outcome = shift_decrypt(message_, int(key_))
-    # pyperclip.copy(outcome)
-
-    # shift_encrypt("siemaelo", 4)
-    #
-    # franken = """You will rejoice to hear that no disaster has accompanied the
-    # commencement of an enterprise which you have regarded with such evil
-    # forebodings.  I arrived here yesterday, and my first task is to assure
-    # my dear sister of my welfare and increasing confidence in the success
-    # of my undertaking."""
-    #
-    # secret_key = 23
-    # encrypted = shift_encrypt(franken, secret_key)
-    # crack_shift_cipher_smart(encrypted, EnglishDetector("../dictionary.txt"))
 
 if __name__ == '__main__':
-    ceasar = ShiftCipher()
-    key = 4
-    msg = "siema elo"
-    enc = ceasar.encrypt(msg, key)
+    # --- 1. Test the Cipher Logic ---
+    cipher_tool = TranspositionCipher()
+    secret_key = 3
+    message = "HELLO WORLD"
 
-    dec = ceasar.decrypt(enc, key)
+    encrypted = cipher_tool.encrypt(message, secret_key)
+    decrypted = cipher_tool.decrypt(encrypted, secret_key)
 
-    print("========Multiplicative cipher========")
-    print(f"Encrypting message: '{msg}' with key: '{key}'")
-    print(f"Encrypted message: '{enc}'")
-    print(f"Decrypting: '{enc}' with key: '{key}'")
-    print(f"Decrypted message: '{dec}'")
+    print("======== TRANSPOSITION CIPHER ========")
+    print(f"Original:  '{message}'")
+    print(f"Encrypted: '{encrypted}'")
+    print(f"Decrypted: '{decrypted}'")
+
+    # --- 2. Test the Hacker Logic ---
+    print("\n======== HACKER MODE ========")
+    hacker = TranspositionHacker()
+
+    # Let's try to hack the message we just encrypted
+    results = hacker.hack(encrypted)
+
+    for res in results:
+        print(f"[CANDIDATE] Key: {res['key']} | Text: {res['text'][:40]}...")
